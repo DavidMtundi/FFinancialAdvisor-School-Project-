@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "678768235049",
+    "project_id": "financialadvisor-ae0e7",
+    "storage_bucket": "financialadvisor-ae0e7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678768235049:android:9af3e0ff4a5a8f016fc238",
+        "android_client_info": {
+          "package_name": "com.example.finadd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "678768235049-kihcb6bakmdiabmbkjfjvadldh8ao2p3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCko4HpH0Hu-UvH0vboBrp-799yihT7pM8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678768235049-kihcb6bakmdiabmbkjfjvadldh8ao2p3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678768235049:android:4587f86491de1dc16fc238",
+        "android_client_info": {
+          "package_name": "in.piggyvault.piggy_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "678768235049-kihcb6bakmdiabmbkjfjvadldh8ao2p3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCko4HpH0Hu-UvH0vboBrp-799yihT7pM8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678768235049-kihcb6bakmdiabmbkjfjvadldh8ao2p3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
