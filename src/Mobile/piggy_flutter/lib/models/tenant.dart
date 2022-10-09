@@ -7,5 +7,5 @@ class Tenant {
         tenancyName = json['tenancyName'];
 
   final String? tenancyName, name;
-  final int? id;
+  final String? id;
 }

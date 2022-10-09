@@ -8,7 +8,7 @@ class UIData {
   static const String categoriesRoute = "/categories";
 
   //strings
-  static const String appName = "FinAdd";
+  static const String appName = "Your Financial Advisor";
   static const String appVersion = "0.13.1";
   static const String authToken = "authToken";
   static const String firstAccess = "firstAccess";

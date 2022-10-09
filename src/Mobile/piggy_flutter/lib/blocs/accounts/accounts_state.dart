@@ -12,7 +12,7 @@ class AccountsLoading extends AccountsState {}
 
 class AccountsLoaded extends AccountsState {
   const AccountsLoaded(
-      [this.userAccounts = const [], this.familyAccounts = const []]);
+      [this.userAccounts , this.familyAccounts]);
 
   final List<Account>? userAccounts;
   final List<Account>? familyAccounts;

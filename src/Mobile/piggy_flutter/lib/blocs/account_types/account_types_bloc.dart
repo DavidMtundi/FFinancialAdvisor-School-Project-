@@ -18,7 +18,7 @@ class AccountTypesBloc extends Bloc<AccountTypesEvent, AccountTypesState> {
     if (event is AccountTypesLoad) {
       yield AccountTypesLoading();
       try {
-        final List<AccountType> accountTypes =
+        final List<AccountType> accountTypes =//[AccountType("Savings", 1),AccountType("Expense", 2)];
             await accountRepository.getAccountTypes();
         yield AccountTypesLoaded(accountTypes: accountTypes);
       } catch (error) {

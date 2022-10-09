@@ -161,16 +161,16 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                                   ),
                                   isEmpty:
                                       accountFormModel!.accountTypeId == null,
-                                  child: DropdownButton<int>(
+                                  child: DropdownButton<String>(
                                     value: accountFormModel!.accountTypeId,
-                                    onChanged: (int? value) {
+                                    onChanged: (String? value) {
                                       setState(() {
                                         accountFormModel!.accountTypeId = value;
                                       });
                                     },
                                     items: accountTypeState.accountTypes
                                         .map((AccountType type) {
-                                      return DropdownMenuItem<int>(
+                                      return DropdownMenuItem<String>(
                                         value: type.id,
                                         child: Text(type.name!),
                                       );

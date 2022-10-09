@@ -135,7 +135,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
             scale: _hideFabAnimation,
             alignment: Alignment.bottomCenter,
             child: AddTransactionFab(
-                // account: widget.category,
+                //account: widget.category,
                 ),
           ),
         ),
@@ -730,7 +730,8 @@ class _CategoryDetailPageState extends State<CategoryDetailPage>
     );
   }
 
-  void showDemoDialog({required BuildContext context, CategoryTransactionsBloc? bloc}) {
+  void showDemoDialog(
+      {required BuildContext context, CategoryTransactionsBloc? bloc}) {
     showDialog<dynamic>(
       context: context,
       builder: (BuildContext context) => CalendarPopupView(

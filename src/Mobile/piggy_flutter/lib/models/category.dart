@@ -17,7 +17,7 @@ class Category {
   }
 
   String? name;
-   String? id;
+  String? id;
   String? icon;
 
   @override

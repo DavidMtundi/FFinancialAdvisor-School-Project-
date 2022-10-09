@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:piggy_flutter/blocs/auth/auth.dart';
 import 'package:piggy_flutter/models/login_information_result.dart';
@@ -27,7 +28,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (hasToken) {
           final LoginInformationResult? result =
               await userRepository.getCurrentLoginInformation();
-          if (result == null || result.user == null || result.user!.id == null) {
+          if (result == null ||
+              result.user == null ||
+              result.user!.id == null) {
             yield AuthUnauthenticated();
           } else {
             yield AuthAuthenticated(user: result.user, tenant: result.tenant);
@@ -41,6 +44,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (event is LoggedIn) {
       yield AuthLoading();
       await userRepository.persistToken(event.token!);
+      // await userRepository
+      //     .persistToken(await FirebaseAuth.instance.currentUser!.getIdToken());
 
       try {
         await OneSignal.shared

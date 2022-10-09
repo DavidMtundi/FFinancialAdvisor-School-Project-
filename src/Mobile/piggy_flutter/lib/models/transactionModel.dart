@@ -14,16 +14,16 @@ class TransactionModel {
 
   TransactionModel.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        balance = json['balance'],
+        balance = json['balance'] ?? 00,
         categoryName = json['category']['name'],
         categoryIcon = json['category']['icon'],
         description = json['description'],
-        creatorUserName = json['creatorUserName'],
+        creatorUserName = json['creatorUserName'] ?? "n",
         accountName = json['account']['name'],
         // accountCurrencySymbol = json['account']['currency']['symbol'],
         transactionTime = json['transactionTime'],
         amount = json['amount'],
-        amountInDefaultCurrency = json['amountInDefaultCurrency'];
+        amountInDefaultCurrency = json['amount'];
   toMap() {
     Map<String, dynamic> returnthis = new Map<String, dynamic>();
     returnthis['id'] = this.id;

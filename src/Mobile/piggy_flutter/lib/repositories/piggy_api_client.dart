@@ -17,20 +17,9 @@ class PiggyApiClient {
 
   // ACCOUNT
   Future<AccountFormModel?> getAccountForEdit(String? id) async {
-    //get the accountid
-    //get it from the location
-//     DocumentReference DocumentChange =
-//         FirebaseFirestore.instance.collection("account").doc(id);
-// //DocumentReference doc = await CRUDModel(
-//     final ApiResponse<dynamic> result = await getAsync<dynamic>(
-//         '$baseUrl/api/services/app/account/getAccountForEdit?id=$id');
     var result = await CRUDModel<AccountFormModel>("account").getById(id!);
 
-    //if (result!) {
     return AccountFormModel.fromJson(result);
-    // }
-
-    // return null;
   }
 
   // CATEGORY
@@ -45,52 +34,14 @@ class PiggyApiClient {
     } catch (e) {
       return false;
     }
-    // try {
-    //   final resultgotten = input.id != null
-    //       ? await FirebaseFirestore.instance
-    //           .collection("category")
-    //           .doc(input.id)
-    //       : await FirebaseFirestore.instance.collection("category").doc();
-    //   input.id = resultgotten.id;
-    //   var value = input.toJson();
-    //   await resultgotten.set(value);
-    //   return true;
-    // } catch (e) {
-    //   return false;
-    // }
-
-    // final result = await postAsync(
-    //     '$baseUrl/api/services/app/transaction/CreateOrUpdateTransaction', {
-    //   "id": input.id,
-    //   "description": input.description,
-    //   "amount": input.amount,
-    //   "categoryId": input.categoryId,
-    //   "accountId": input.accountId,
-    //   "transactionTime": input.transactionTime
-    // });
-
-    //return ApiResponse.fromJson(returnthis);
-
-    // final response = await postAsync<dynamic>(
-    //     '$baseUrl/api/services/app/Category/CreateOrUpdateCategory',
-    //     {'id': input.id, 'name': input.name, 'icon': input.icon});
-    // if (!response.success!) {
-    //   throw Exception(response.error);
-    // }
-
-    // return true;
   }
 
   Future<IsTenantAvailableResult> isTenantAvailable(String tenancyName) async {
     final tenantUrl = '$baseUrl/api/services/app/Account/IsTenantAvailable';
-    final response =
-        await this.postAsync<dynamic>(tenantUrl, {"tenancyName": tenancyName});
 
-    if (!response.success!) {
-      throw Exception('invalid credentials');
-    }
+    Map<String, dynamic> response = ({});
 
-    return IsTenantAvailableResult.fromJson(response.result);
+    return IsTenantAvailableResult.fromJson(response);
   }
 
   Future<AuthenticateResult> authenticate(
@@ -104,9 +55,9 @@ class PiggyApiClient {
       throw Exception("Please Check YOur email and password");
     }
     Map<String, dynamic> loginResult = ({
-      "accessToken": credential.user!.getIdToken(),
-      "encryptedAccessToken": credential.user!.getIdToken(),
-      "expireInSeconds": 100,
+      "accessToken": credential.user!.uid,
+      "encryptedAccessToken": credential.user!.uid,
+      "expireInSeconds": 100000,
       "userId": credential.user!.uid
     });
     // final loginUrl = '$baseUrl/api/TokenAuth/Authenticate';
@@ -127,21 +78,22 @@ class PiggyApiClient {
     // const String userUrl =
     //     '$baseUrl/api/services/app/session/GetCurrentLoginInformations';
     // final ApiResponse<dynamic> response = await getAsync<dynamic>(userUrl);
-    var response = FirebaseAuth.instance.currentUser;
-    Map<String, dynamic> result = ({
-      "id": response!.uid,
-      "name": response.displayName,
-      "surname": response.displayName,
-      "userName": response.displayName,
-      "emailAddress": response.email,
-      "profilePictureId": response.photoURL
-    });
-    Map<String, dynamic> tenantResult = ({
-      "id": response.uid,
-      "name": response.displayName,
-      "tenancyName": response.displayName,
-    });
-    if (result['user'] != null) {
+    var response = await FirebaseAuth.instance.currentUser;
+    if (response != null) {
+      Map<String, dynamic> result = ({
+        "id": response.uid,
+        "name": response.displayName ?? response.email!.substring(0, 6),
+        "surname": response.displayName ?? response.email!.substring(0, 6),
+        "userName": response.displayName ?? response.email!.substring(0, 6),
+        "emailAddress": response.email,
+        "profilePictureId": response.photoURL
+      });
+      Map<String, dynamic> tenantResult = ({
+        "id": response.uid,
+        "name": response.displayName ?? response.email!.substring(0, 6),
+        "tenancyName": response.displayName ?? response.email!.substring(0, 6),
+      });
+      // if (response != null) {
       return LoginInformationResult(
           user: UserModel.fromJson(result),
           tenant: Tenant.fromJson(tenantResult));
@@ -152,55 +104,138 @@ class PiggyApiClient {
 
 //get transaction
   Future<TransactionSummary> getTransactionSummary(String duration) async {
-    var result = await getAsync<dynamic>(
-        '$baseUrl/api/services/app/Transaction/GetSummary?duration=$duration');
+    // var ans = TransactionSummary(
+    //     20000, 200, 121210, 23289, 9999, 9992, 232230, 23232, "12", "Kshs", 10);
+    var id = FirebaseAuth.instance.currentUser!.uid;
+    var data = await CRUDModel("allaccounts").getById(id);
 
-    return TransactionSummary.fromJson(result.result);
+    return TransactionSummary.fromJson(data);
   }
 
   Future<TenantAccountsResult> getTenantAccounts() async {
     List<Account> userAccountItems = [];
     List<Account> familyAccountItems = [];
 
-    // var result = await getAsync<dynamic>(
-    //     '$baseUrl/api/services/app/account/GetTenantAccounts');
-    var result = await CRUDModel("allaccounts").fetch([]);
-
-    /// if (result.success!) {
-    result['useraccounts'].forEach((account) {
-      userAccountItems.add(Account.fromJson(account));
-    });
-
-    result.result['otheraccounts'].forEach((account) {
-      familyAccountItems.add(Account.fromJson(account));
-    });
+    // try {
+    var resultdocs = await CRUDModel("account").fetch([]);
+    for (var i in resultdocs) {
+      userAccountItems.add(Account.fromJson(i));
+    }
+    print("here we go");
+    print("successfully gotten all the docs");
 
     return TenantAccountsResult(
         familyAccounts: familyAccountItems, userAccounts: userAccountItems);
+    // } catch (e) {
+    //   return TenantAccountsResult(
+    //       familyAccounts: familyAccountItems, userAccounts: userAccountItems);
+    // }
   }
 
   Future<List<Category>> getTenantCategories() async {
     List<Category> tenantCategories = [];
 
-    // var result = await getAsync(
-    //     '$baseUrl/api/services/app/Category/GetTenantCategories');
-    //var result = await FirebaseFirestore.instance.collection("category").get();
-    tenantCategories = await CRUDModel<Category>("category").fetch([]);
-    //if (result.) {
+    try {
+      var resultdocs = await CRUDModel("category").fetch([]);
+      for (var i in resultdocs) {
+        tenantCategories.add(Category.fromJson(i));
+      }
+      print("here we go");
 
-    // result.docs.forEach(
-    //     (category) => tenantCategories.add(Category.fromJson(category.data())));
-    //  }
-    return tenantCategories;
+      return tenantCategories;
+    } catch (e) {
+      return tenantCategories;
+    }
   }
 
 //create or update a transaction
   Future<ApiResponse<dynamic>> createOrUpdateTransaction(
       TransactionEditDto input) async {
-    Map<String, dynamic> returnthis = new Map();
+    Map<String, dynamic> returnthis = new Map<String, dynamic>();
+    var id = FirebaseAuth.instance.currentUser!.uid;
+    var data = new Map<String, dynamic>();
+    double balance = 0;
     try {
-      var result = await CRUDModel("transaction")
-          .addProduct(input.toJson(), input.id, "id");
+      data = await CRUDModel("allaccounts").getById(id);
+
+      if (data.isEmpty) {
+        await CRUDModel("allaccounts").addProduct(
+            ({
+              "balance": 0,
+              "tenantNetWorth": 0,
+              "userNetWorth": 0,
+              "tenantIncome": 0,
+              "userIncome": 0,
+              "tenantExpense": 0,
+              "userExpense": 0,
+              "tenantSaved": 0,
+              "userSaved": 0,
+              "netWorthPercentage": 100,
+              "totalFamilyTransactionsCount": 0
+            }),
+            id,
+            "id");
+      }
+      balance = data['balance'] ?? 0;
+    } catch (e) {
+      await CRUDModel("allaccounts").addProduct(
+          ({
+            "balance": 0,
+            "tenantNetWorth": 0,
+            "userNetWorth": 0,
+            "tenantIncome": 0,
+            "userIncome": 0,
+            "tenantExpense": 0,
+            "userExpense": 0,
+            "tenantSaved": 0,
+            "userSaved": 0,
+            "netWorthPercentage": 0,
+            "totalFamilyTransactionsCount": 0
+          }),
+          id,
+          "id");
+      balance = 0;
+    }
+    try {
+      balance = input.amount! + balance;
+      var tenantincome = data['tenantIncome'] ?? 0;
+      var userincome = data["userIncome"] ?? 0;
+      var tenantexpense = data['tenantExpense'] ?? 0;
+      var userExpense = data['userExpense'] ?? 0;
+      var totalFamilyTransactionsCount =
+          data['totalFamilyTransactionsCount'] ?? 0;
+      var userSaved = data['userSaved'] ?? 0;
+      var tenantSaved = data['tenantSaved'] ?? 0;
+      data["balance"] = balance;
+      data["tenantNetWorth"] = balance;
+      data["userNetWorth"] = balance;
+      data["tenantIncome"] =
+          input.amount! > 0 ? tenantincome + input.amount : tenantincome;
+      data["userIncome"] =
+          input.amount! > 0 ? userincome + input.amount : userincome;
+      data["tenantExpense"] =
+          input.amount! < 0 ? tenantexpense + input.amount : tenantexpense;
+      data["userExpense"] =
+          input.amount! < 0 ? userExpense + input.amount : userExpense;
+      data["tenantSaved"] =
+          tenantSaved + input.amount! > 0 ? tenantSaved + input.amount! : 0;
+      data["userSaved"] =
+          userSaved + input.amount! > 0 ? userSaved + input.amount! : 0;
+      data["totalFamilyTransactionsCount"] = totalFamilyTransactionsCount + 1;
+      data["netWorthPercentage"] = data["userIncome"] > 0 && data["balance"] > 0
+          ? (data['balance'] / data['userIncome']) * 100
+          : 0;
+    } catch (e) {
+      print(e);
+    }
+
+    var sendthis = input.toJson();
+
+    sendthis['balance'] = balance;
+    try {
+      var thefirst = await CRUDModel("allaccounts").addProduct(data, id, "id");
+      var result =
+          await CRUDModel("transactions").addProduct(sendthis, input.id, "id");
       returnthis = ({
         "success": true,
         "result": "success",
@@ -219,24 +254,27 @@ class PiggyApiClient {
 
 //transfer from one account to another
   Future<ApiResponse<dynamic>> transfer(TransferInput input) async {
-    final result =
-        await postAsync('$baseUrl/api/services/app/transaction/transfer', {
-      "id": input.id,
-      "description": input.description,
-      "amount": input.amount,
-      "toAmount": input.toAmount,
-      "categoryId": input.categoryId,
-      "accountId": input.accountId,
-      "toAccountId": input.toAccountId,
-      "transactionTime": input.transactionTime
-    });
+    final result = ApiResponse(
+        success: true,
+        result: ({}),
+        unAuthorizedRequest: false); // final result =
+    //     await postAsync('$baseUrl/api/services/app/transaction/transfer', {
+    //   "id": input.id,
+    //   "description": input.description,
+    //   "amount": input.amount,
+    //   "toAmount": input.toAmount,
+    //   "categoryId": input.categoryId,
+    //   "accountId": input.accountId,
+    //   "toAccountId": input.toAccountId,
+    //   "transactionTime": input.transactionTime
+    // });
 
     return result;
   }
 
   Future<List<TransactionModel>> getTransactions(
       GetTransactionsInput input) async {
-    final List<TransactionModel> transactions = <TransactionModel>[];
+    List<TransactionModel> transactions = [];
 
     String params = '';
     List<String> paramlist = [];
@@ -264,23 +302,22 @@ class PiggyApiClient {
       params += '&endDate=${input.endDate}';
     paramlist.add('"endDate",isEqualTo:"${input.endDate}"');
 
-    // final ApiResponse<dynamic> result = await getAsync<dynamic>(
-    //     '$baseUrl/api/services/app/transaction/GetTransactions?$params');
+    final result = await CRUDModel("transactions").fetch([]);
+    try {
+      for (var i in result) {
+        var category = await CRUDModel("category").getById(i['categoryId']);
+        var account = await CRUDModel("account").getById(i['accountId']);
+        i['category'] = category;
+        i['account'] = account;
+        transactions.add(TransactionModel.fromJson(i));
+      }
+      print("here we go");
 
-    // List<TransactionModel> allfound =
-    //     await CRUDModel<TransactionModel>("transaction").fetch([]);
-    // allfound.forEach((element) {
-    //   transactions.add(element);
-    // });
-    final result = await CRUDModel<TransactionModel>("transations").fetch([]);
-    //if (result!) {
-    result.forEach((dynamic transaction) {
-      var model = jsonEncode(transaction);
-      var decodedmodel = jsonDecode(model.toString());
-      transactions.add(TransactionModel.fromJson(decodedmodel));
-    });
-    // }
-    return transactions;
+      return transactions;
+    } catch (e) {
+      return transactions;
+    }
+    // return transactions;
   }
 
   Future<Account> getAccountDetails(String accountId) async {
@@ -293,6 +330,7 @@ class PiggyApiClient {
   Future<ApiResponse<dynamic>> createOrUpdateAccount(
       AccountFormModel input) async {
     var returnthis = new Map<String, dynamic>();
+
     try {
       await CRUDModel("account").addProduct(input.toJson(), input.id, "id");
       returnthis = ({
@@ -311,58 +349,90 @@ class PiggyApiClient {
     return ApiResponse.fromJson(returnthis);
   }
 
-  // Future<List<Currency>> getCurrencies() async {
-  //   var result =
-  //       await getAsync('$baseUrl/api/services/app/currency/GetCurrencies');
-
-  //   return result.result['items']
-  //       .map<Currency>((currency) => Currency.fromJson(currency))
-  //       .toList();
-  // }
-
   Future<List<AccountType>> getAccountTypes() async {
-    // var result = await getAsync<dynamic>(
-    //     '$baseUrl/api/services/app/account/GetAccountTypes');
-    var result = await CRUDModel("accounttypes").fetch([]);
-    return await result
-        .map<AccountType>((item) =>
-            AccountType.fromJson(jsonDecode(jsonEncode(item.toString()))))
-        .toList();
+    List<AccountType> returnthis = [];
+    try {
+      var resultdocs = await CRUDModel("accounttype").fetch([]);
+      for (var i in resultdocs) {
+        returnthis.add(AccountType.fromJson(i));
+      }
+      print("here we go");
+
+      return returnthis;
+    } catch (e) {
+      return returnthis;
+    }
   }
 
   // Reports
   Future<List<CategoryWiseRecentMonthsReportItem>>
       getCategoryWiseTransactionSummaryHistory() async {
     List<CategoryWiseRecentMonthsReportItem> data = [];
-    var result = await getAsync(
-        '$baseUrl/api/services/app/Report/GetCategoryWiseTransactionSummaryHistory?numberOfIteration=3&periodOfIteration=month&typeOfTransaction=expense');
+    Map<String, dynamic> json = ({});
+    Map<String, dynamic> first = ({});
+    Map<String, dynamic> second = ({});
+    Map<String, dynamic> third = ({});
 
-    if (result.success!) {
-      result.result['items'].forEach((item) =>
-          data.add(CategoryWiseRecentMonthsReportItem.fromJson(item)));
+    List<Map<String, dynamic>> firstdata = [];
+    List<Map<String, dynamic>> seconddata = [];
+    List<Map<String, dynamic>> thirddata = [];
+
+    double totalfirst = 0;
+    double totalsecondmonth = 0;
+    double totalthirdmonth = 0;
+
+    //get all transactions
+    List<TransactionModel> alltransactions =
+        await getTransactions(GetTransactionsInput());
+    for (TransactionModel model in alltransactions) {
+      int monthtotal =
+          DateTime.now().month - DateTime.parse(model.transactionTime!).month;
+      if (monthtotal < 1) {
+        totalfirst += model.amount!;
+        var value = ({'total': totalfirst});
+        firstdata.add(value);
+        first['categoryName'] = model.categoryName!;
+      } else if ((monthtotal < 2)) {
+        totalsecondmonth += model.amount!;
+        var value = ({'total': totalsecondmonth});
+        seconddata.add(value);
+        second['categoryName'] = model.categoryName!;
+      } else if ((monthtotal < 3)) {
+        totalthirdmonth += model.amount!;
+        var value = ({'total': totalthirdmonth});
+        thirddata.add(value);
+        third['categoryName'] = model.categoryName!;
+      }
     }
+    first['datasets'] = firstdata;
+    second['datasets'] = seconddata;
+    third['datasets'] = thirddata;
+
+    data.add(CategoryWiseRecentMonthsReportItem.fromJson(first));
+    data.add(CategoryWiseRecentMonthsReportItem.fromJson(second));
+
+    data.add(CategoryWiseRecentMonthsReportItem.fromJson(third));
+
+    //group by month
+
     return data;
   }
 
   Future<List<CategoryReportListDto>> getCategoryReport(
       GetCategoryReportInput input) async {
     final List<CategoryReportListDto> data = [];
-    final ApiResponse result = await getAsync<dynamic>(
-        '$baseUrl/api/services/app/Report/GetCategoryReport?startDate=${input.startDate}&endDate=${input.endDate}');
-
-    if (result.success!) {
-      result.result['items']
-          .forEach((item) => data.add(CategoryReportListDto.fromJson(item)));
-    }
+    // final ApiResponse result = await getAsync<dynamic>(
+    //     '$baseUrl/api/services/app/Report/GetCategoryReport?startDate=${input.startDate}&endDate=${input.endDate}');
+    //
+    // if (result.success!) {
+    //   result.result['items']
+    //       .forEach((item) => data.add(CategoryReportListDto.fromJson(item)));
+    // }
     return data;
   }
 
   // Transaction
-  Future<void> deleteTransaction(String id) async {
-    await CRUDModel("transaction").remove(id);
-    // await deleteAsync<dynamic>(
-    //     '$baseUrl/api/services/app/transaction/DeleteTransaction?id=$id');
-  }
+  Future<void> deleteTransaction(String id) async {}
 
   Future<void> createOrUpdateTransactionComment(
       String? transactionId, String content) async {
@@ -382,139 +452,20 @@ class PiggyApiClient {
 
   Future<List<TransactionComment>> getTransactionComments(String id) async {
     List<TransactionComment> comments = [];
-    // var result = await getAsync<dynamic>(
-    //     '$baseUrl/api/services/app/transaction/GetTransactionComments?id=$id');
-    var result = await CRUDModel("transactioncomments").fetch([]);
 
-    result.forEach((element) {
-      var value = jsonEncode(element);
-      comments.add(TransactionComment.fromJson(
-          jsonDecode(jsonEncode(value.toString()))));
-    });
-    // if (result.success!) {
-    //   result.result['items'].forEach((comment) {
-    //     comments.add(TransactionComment.fromJson(comment));
-    //   });
-    // }
+    try {
+      var resultdocs = await CRUDModel("transactioncomments").fetch([]);
+      for (var i in resultdocs) {
+        comments.add(TransactionComment.fromJson(i));
+      }
+      print("here we go");
 
-    return comments;
-  }
-
-  // USER
-  Future<UserSettings> getUserSettings() async {
-    var result =
-        await getAsync<dynamic>('$baseUrl/api/services/app/User/GetSettings');
-
-    return UserSettings.fromJson(result.result);
-  }
-
-  Future<void> changeDefaultCurrency(String currencyCode) async {
-    await postAsync<dynamic>(
-        '$baseUrl/api/services/app/User/ChangeDefaultCurrency',
-        {"currencyCode": currencyCode});
+      return comments;
+    } catch (e) {
+      return comments;
+    }
   }
 
 // utils
 
-  Future<ApiResponse<T?>> getAsync<T>(String resourcePath) async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString(UIData.authToken);
-    var tenantId = prefs.getInt(UIData.tenantId);
-    var url = Uri.parse(resourcePath);
-
-    var response = await this.httpClient.get(url, headers: {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token',
-      'Piggy-TenantId': tenantId.toString()
-    });
-    return processResponse<T>(response);
-  }
-
-  Future<ApiResponse<T?>> postAsync<T>(
-      String resourcePath, dynamic data) async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString(UIData.authToken);
-    var tenantId = prefs.getInt(UIData.tenantId);
-
-    var content = json.encoder.convert(data);
-    Map<String, String> headers;
-
-    if (token == null) {
-      headers = {
-        'Content-type': 'application/json',
-        'Accept': 'application/json',
-        'Piggy-TenantId': tenantId.toString()
-      };
-    } else {
-      headers = {
-        'Content-type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-        'Piggy-TenantId': tenantId.toString()
-      };
-    }
-
-    var url = Uri.parse(resourcePath);
-
-    var response = await http.post(url, body: content, headers: headers);
-    return processResponse<T>(response);
-  }
-
-  Future<ApiResponse<T?>> deleteAsync<T>(String resourcePath) async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString(UIData.authToken);
-    var tenantId = prefs.getInt(UIData.tenantId);
-
-    Map<String, String> headers;
-
-    if (token == null) {
-      // TODO: throw exception
-      headers = {
-        'Content-type': 'application/json',
-        'Accept': 'application/json',
-        'Piggy-TenantId': tenantId.toString()
-      };
-    } else {
-      headers = {
-        'Content-type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-        'Piggy-TenantId': tenantId.toString()
-      };
-    }
-
-    var url = Uri.parse(resourcePath);
-    var response = await http.delete(url, headers: headers);
-    return processResponse<T>(response);
-  }
-
-  ApiResponse<T?> processResponse<T>(http.Response response) {
-    try {
-      // if (!((response.statusCode < 200) ||
-      //     (response.statusCode >= 300) ||
-      //     (response.body == null))) {
-      var jsonResult = response.body;
-      dynamic parsedJson = jsonDecode(jsonResult);
-
-      // print(jsonResult);
-
-      var output = ApiResponse<T?>(
-        result: parsedJson["result"],
-        success: parsedJson["success"],
-        unAuthorizedRequest: parsedJson['unAuthorizedRequest'],
-      );
-
-      if (!output.success!) {
-        output.error = parsedJson["error"]["message"];
-      }
-      return output;
-    } catch (e) {
-      return ApiResponse<T?>(
-          result: null,
-          success: false,
-          unAuthorizedRequest: false,
-          error: 'Something went wrong. Please try again');
-    }
-  }
 }

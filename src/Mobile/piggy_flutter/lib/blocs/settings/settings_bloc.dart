@@ -19,8 +19,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       yield SettingsLoading();
 
       try {
-        var settings = await userRepository.getUserSettings();
-        yield SettingsLoaded(settings: settings);
+      //  var settings = await userRepository.getUserSettings();
+        //yield SettingsLoaded(settings: settings);
       } catch (error) {
         yield SettingsError(errorMessage: error.toString());
       }
@@ -28,7 +28,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
     if (event is ChangeDefaultCurrency) {
       yield SettingsLoading();
-      await userRepository.changeDefaultCurrency(event.currencyCode);
+     // await userRepository.changeDefaultCurrency(event.currencyCode);
       add(LoadUserSettings());
     }
   }

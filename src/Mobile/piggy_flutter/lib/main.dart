@@ -98,14 +98,12 @@ Future<void> main() async {
           create: (BuildContext context) => AccountsBloc(
               accountRepository: accountRepository,
               transactionsBloc: BlocProvider.of<TransactionBloc>(context),
-              transactionDetailBloc:
-                  BlocProvider.of<TransactionDetailBloc>(context),
+              transactionDetailBloc: BlocProvider.of<TransactionDetailBloc>(context),
               authBloc: BlocProvider.of<AuthBloc>(context))),
       BlocProvider<RecentTransactionsBloc>(
         lazy: false,
         create: (BuildContext context) => RecentTransactionsBloc(
-            transactionDetailBloc:
-                BlocProvider.of<TransactionDetailBloc>(context),
+            transactionDetailBloc: BlocProvider.of<TransactionDetailBloc>(context),
             transactionRepository: transactionRepository,
             transactionsBloc: BlocProvider.of<TransactionBloc>(context),
             authBloc: BlocProvider.of<AuthBloc>(context)),
@@ -113,8 +111,7 @@ Future<void> main() async {
       BlocProvider<TransactionSummaryBloc>(
         lazy: false,
         create: (BuildContext context) => TransactionSummaryBloc(
-            transactionDetailBloc:
-                BlocProvider.of<TransactionDetailBloc>(context),
+            transactionDetailBloc:BlocProvider.of<TransactionDetailBloc>(context),
             transactionsBloc: BlocProvider.of<TransactionBloc>(context),
             authBloc: BlocProvider.of<AuthBloc>(context),
             transactionRepository: transactionRepository),
@@ -152,7 +149,6 @@ Future<void> _scheduleReminderNotification() async {
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime);
 }
-
 class App extends StatelessWidget {
   const App({
     Key? key,
@@ -160,12 +156,15 @@ class App extends StatelessWidget {
     required this.transactionRepository,
     required this.accountRepository,
     required this.reportRepository,
+
   }) : super(key: key);
 
   final UserRepository userRepository;
   final TransactionRepository transactionRepository;
   final AccountRepository accountRepository;
   final ReportRepository reportRepository;
+
+  
 
   // This widget is the root of your application.
   @override
@@ -179,6 +178,7 @@ class App extends StatelessWidget {
       systemNavigationBarDividerColor: Colors.grey,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
+    
 
     return MultiRepositoryProvider(
       providers: [
@@ -204,7 +204,7 @@ class App extends StatelessWidget {
             primaryColor: Colors.white),
         home: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
           if (state is AuthAuthenticated) {
-            return const HomeScreen();
+            return  HomeScreen();
           }
           if (state is AuthUnauthenticated) {
             return LoginPage(userRepository: userRepository);
@@ -218,7 +218,7 @@ class App extends StatelessWidget {
           UIData.loginRoute: (BuildContext context) => LoginPage(
                 userRepository: userRepository,
               ),
-          UIData.dashboardRoute: (BuildContext context) => const HomeScreen(),
+          UIData.dashboardRoute: (BuildContext context) =>  HomeScreen(),
         },
       ),
     );

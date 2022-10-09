@@ -76,22 +76,28 @@ class _CategoryWiseRecentMonthsReportScreenState
                           (CategoryWiseRecentMonthsReportItem item) => DataRow(
                             cells: [
                               DataCell(
-                                Text(item.categoryName!),
+                                Text(item.categoryName ?? " Unspecified "),
                                 showEditIcon: false,
                                 placeholder: false,
                               ),
                               DataCell(
-                                Text(item.datasets[0].total.toMoney()),
+                                item.datasets.isNotEmpty
+                                    ? Text(item.datasets[0].total.toMoney())
+                                    : Text("0 Kshs"),
                                 showEditIcon: false,
                                 placeholder: false,
                               ),
                               DataCell(
-                                Text(item.datasets[1].total.toMoney()),
+                                item.datasets.isNotEmpty
+                                    ? Text(item.datasets[1].total.toMoney())
+                                    : Text("0 Kshs"),
                                 showEditIcon: false,
                                 placeholder: false,
                               ),
                               DataCell(
-                                Text(item.datasets[2].total.toMoney()),
+                                item.datasets.isNotEmpty
+                                    ? Text(item.datasets[2].total.toMoney())
+                                    : Text("0 Kshs"),
                                 showEditIcon: false,
                                 placeholder: false,
                               )

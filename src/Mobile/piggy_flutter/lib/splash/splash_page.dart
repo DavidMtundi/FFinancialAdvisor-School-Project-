@@ -6,10 +6,14 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text(UIData.appName),
-      ),
+    return Scaffold(
+      body: Center(child:Container(
+          child: Column(
+
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [Text(UIData.appName), Text("Welcome..")],
+          )),
+      )
     );
   }
 }

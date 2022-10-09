@@ -13,9 +13,9 @@ class TransactionEditDto {
 
   TransactionEditDto.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        description = json['description'],
-        amount = json['amount'],
-        categoryId = json['categoryId'],
+        description = json['description']??"description",
+        amount = json['amount']??00,
+        categoryId = json['categoryId']??"here",
         transactionTime = json['transactionTime'],
         accountId = json['accountId'];
 

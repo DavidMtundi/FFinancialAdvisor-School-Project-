@@ -8,7 +8,7 @@ class TransactionSummary {
       tenantSaved = 0.0,
       userSaved = 0.0;
   String? networthPercentage = "0%", currencySymbol = "";
-  int? totalFamilyTransactionsCount = 0;
+  int? totalFamilyTransactionsCount;
 
   TransactionSummary(
       this.tenantNetWorth,
@@ -28,11 +28,11 @@ class TransactionSummary {
         userNetWorth = json['userNetWorth'],
         tenantIncome = json['tenantIncome'],
         userIncome = json['userIncome'],
-        tenantExpense = json['tenantExpense'],
-        userExpense = json['userExprense'],
+        tenantExpense = (json['tenantExpense']).abs(),
+        userExpense = (json['userExpense']).abs(),
         tenantSaved = json['tenantSaved'],
         userSaved = json['userSaved'],
-        networthPercentage = json['netWorthPercentage'],
+        networthPercentage = json['netWorthPercentage'].toString() + '%',
         currencySymbol = 'Kshs',
 
         //currencySymbol = json['currencySymbol'],

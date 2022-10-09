@@ -17,7 +17,7 @@ class CommonDrawer extends StatelessWidget {
       const TextStyle(fontWeight: FontWeight.w700, fontSize: 18.0);
   final AnimationController? animationController;
 
-  const CommonDrawer({Key? key, required this.animationController})
+  const CommonDrawer({Key? key, required this.animationController, })
       : super(key: key);
 
   @override

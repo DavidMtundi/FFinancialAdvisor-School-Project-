@@ -17,23 +17,22 @@ class UserRepository {
       {required String tenancyName,
       required String usernameOrEmailAddress,
       required String password}) async {
-    final isTenantAvailableResult =
-        await piggyApiClient.isTenantAvailable(tenancyName);
+    // final isTenantAvailableResult =
+    //     await piggyApiClient.isTenantAvailable(tenancyName);
 
-    if (isTenantAvailableResult.state == 1) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt(UIData.tenantId, isTenantAvailableResult.tenantId!);
+    // if (isTenantAvailableResult.state == 1) {
 
-      final authenticateResult = await piggyApiClient.authenticate(
-          usernameOrEmailAddress: usernameOrEmailAddress, password: password);
+    final authenticateResult = await piggyApiClient.authenticate(
+        usernameOrEmailAddress: usernameOrEmailAddress, password: password);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(UIData.tenantId, authenticateResult.userId!);
 
-      FirebaseAuth.instance.currentUser!.getIdToken(true);
+    FirebaseAuth.instance.currentUser!.getIdToken(true);
 
-      return authenticateResult.accessToken;
-    }
+    return authenticateResult.accessToken;
+    // }
 
-    // TODO: handle invalid tenant cases
-    return null;
+   // return null;
   }
 
   Future<LoginInformationResult?> getCurrentLoginInformation() async {
@@ -66,11 +65,11 @@ class UserRepository {
     return;
   }
 
-  Future<UserSettings> getUserSettings() async {
-    return await piggyApiClient.getUserSettings();
-  }
-
-  Future<void> changeDefaultCurrency(String currencyCode) async {
-    return await piggyApiClient.changeDefaultCurrency(currencyCode);
-  }
+  // Future<UserSettings> getUserSettings() async {
+  //   //return await piggyApiClient.getUserSettings();
+  // }
+  //
+  // Future<void> changeDefaultCurrency(String currencyCode) async {
+  //   //return await piggyApiClient.changeDefaultCurrency(currencyCode);
+  // }
 }

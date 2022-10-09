@@ -15,7 +15,8 @@ class AccountFormModel {
 
   String? id;
   String? name;
-  int? currencyId, accountTypeId;
+  int? currencyId;
+  String? accountTypeId;
   bool isArchived;
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();

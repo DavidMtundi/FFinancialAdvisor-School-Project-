@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:piggy_flutter/models/models.dart';
 
 class FirebaseApi {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -58,42 +56,44 @@ class CRUDModel<T> {
 
   List<T> Result = [];
 
-  Future fetch(List<String> query) async {
+  Future<List<Map<String, dynamic>>> fetch(List<String> query) async {
     var result = await _api.getDataCollection(query);
+    List<Map<String, dynamic>> alllists = [];
 
-    // await for (var snapshot in result.snapshots()) {
-    //   for (var doc in snapshot.docs) {
-    //     var firstconvert = jsonEncode(doc.data().toString());
-    //     var secondconvert = jsonDecode(firstconvert);
-    //     T data = fromJson(secondconvert);
-    //     Result.add(data);
-    //   }
-    // }
-    // Result = result.snapshots()
-    //     .map((doc) => fromJson(jsonDecode(doc.docs.().toString())))
-    //     .toList<();
-    return result.snapshots().toList();
+    var resultsnapshot = await result.get();
+    var resultdocs = await resultsnapshot.docs.toList();
+    for (var i in resultdocs) {
+      print(i.data() as Map<String, dynamic>);
+      alllists.add(i.data() as Map<String, dynamic>);
+    }
+    return alllists;
   }
+
 //fetch data as a stream
   Stream<QuerySnapshot> fetchAsStream() {
     return _api.streamDataCollection();
   }
+
 //get by id
   Future<Map<String, dynamic>> getById(String id) async {
     var doc = await _api.getDocumentById(id);
-    return jsonDecode(doc.data().toString());
+   
+    return (doc.data() as Map<String, dynamic>);
   }
+
 //this is to delete the object
   Future remove(String id) async {
     await _api.removeDocument(id);
     return;
   }
+
 //update the something in the db
   Future updateProduct(Map<String, dynamic> data, String id) async {
     await _api.updateDocument(data, id);
     return;
   }
-//add anything in the product, 
+
+//add anything in the product,
   Future addProduct(
       Map<String, dynamic> data, String? id, String paramname) async {
     var result = await _api.addDocument(data, id, paramname);

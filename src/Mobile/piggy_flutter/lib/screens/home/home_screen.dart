@@ -8,6 +8,7 @@ import 'package:piggy_flutter/blocs/transaction_detail/bloc.dart';
 import 'package:piggy_flutter/models/models.dart';
 import 'package:piggy_flutter/screens/account/account_form.dart';
 import 'package:piggy_flutter/screens/account/account_list.dart';
+import 'package:piggy_flutter/screens/home/ChatScreen.dart';
 import 'package:piggy_flutter/screens/home/overview_screen.dart';
 import 'package:piggy_flutter/screens/home/recent_transactions.dart';
 import 'package:piggy_flutter/screens/home/user_screen.dart';
@@ -58,14 +59,27 @@ class TabIconData {
       isSelected: false,
       animationController: null,
     ),
+    TabIconData(
+      iconData: MaterialCommunityIcons.chat,
+      index: 4,
+      isSelected: false,
+      animationController: null,
+    ),
+    TabIconData(
+      iconData: MaterialCommunityIcons.cash,
+      index: 5,
+      isSelected: false,
+      animationController: null,
+    ),
   ];
 }
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key, this.startpage = StartPage.Dashboard})
+  const HomeScreen({Key? key, this.startpage = StartPage.Dashboard, })
       : super(key: key);
 
   final StartPage startpage;
+
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -199,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return true;
   }
 
-  Widget bottomBar() {
+  Widget bottomBar(   ) {
     return Column(
       children: <Widget>[
         const Expanded(
@@ -269,6 +283,26 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   tabBody = UserScreen(
                     animationController: animationController,
                   );
+                  _selectedNavIndex = index;
+                });
+              });
+            } else if (index == 4) {
+              animationController!.reverse().then<dynamic>((data) {
+                if (!mounted) {
+                  return;
+                }
+                setState(() {
+                  tabBody = ChatScreen();
+                  _selectedNavIndex = index;
+                });
+              });
+            } else if (index == 5) {
+              animationController!.reverse().then<dynamic>((data) {
+                if (!mounted) {
+                  return;
+                }
+                setState(() {
+                  tabBody = ChatScreen();
                   _selectedNavIndex = index;
                 });
               });
