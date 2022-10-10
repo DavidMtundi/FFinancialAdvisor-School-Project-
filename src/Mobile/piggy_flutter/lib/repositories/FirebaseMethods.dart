@@ -77,7 +77,7 @@ class CRUDModel<T> {
 //get by id
   Future<Map<String, dynamic>> getById(String id) async {
     var doc = await _api.getDocumentById(id);
-   
+
     return (doc.data() as Map<String, dynamic>);
   }
 
