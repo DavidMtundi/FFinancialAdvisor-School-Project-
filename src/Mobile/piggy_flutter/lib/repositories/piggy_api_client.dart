@@ -1,19 +1,13 @@
-import 'dart:convert';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:piggy_flutter/models/models.dart';
 import 'package:piggy_flutter/repositories/FirebaseMethods.dart';
-import 'package:piggy_flutter/utils/uidata.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class PiggyApiClient {
-  PiggyApiClient({required this.httpClient});
+  PiggyApiClient();
 
   static const String baseUrl = 'https://piggyvault.abhith.net';
-
-  final http.Client httpClient;
 
   // ACCOUNT
   Future<AccountFormModel?> getAccountForEdit(String? id) async {
@@ -464,6 +458,87 @@ class PiggyApiClient {
     } catch (e) {
       return comments;
     }
+  }
+
+  ///it gets a list of all sms messages from the phone message
+  Future<List<SmsMessage>> getAllSmsInbox() async {
+    final SmsQuery _query = SmsQuery();
+    List<SmsMessage> _messages = [];
+    var permission = await Permission.sms.status;
+    if (permission.isGranted) {
+      _messages = await _query.querySms(
+        kinds: [SmsQueryKind.inbox],
+        address: 'MPESA',
+        // count: 10,
+      );
+    } else {
+      await Permission.sms.request();
+    }
+    return _messages;
+  }
+
+  Future<List<TransactionModel>> getFromSmsandAddToTransaction() async {
+    List<TransactionModel> transactions = [];
+    List<SmsMessage> _sms = await getAllSmsInbox();
+    for (SmsMessage smsMessage in _sms) {
+      TransactionModel transactionModel = await transactionFromSms(smsMessage);
+      if (transactionModel.amount != null) {
+        transactions.add(transactionModel);
+      }
+    }
+    return transactions;
+  }
+
+  Future<TransactionModel> transactionFromSms(SmsMessage message) async {
+    TransactionModel transactionModel = TransactionModel();
+
+    double amount = await getTransactionAmount(message.body!);
+    bool isvalid = amount != 0;
+    if (isvalid) {
+      transactionModel = TransactionModel(
+        id: message.id.toString(),
+        amount: amount,
+        description: 'From phone',
+        transactionTime: message.date.toString(),
+        amountInDefaultCurrency: amount,
+        accountName: "Phone Sms",
+      );
+    }
+
+    return transactionModel;
+  }
+
+  Future<double> getTransactionAmount(String message) async {
+    RegExp reg = RegExp(r' ?[0-9]{0,}\.?,?[0-9]+\.[0-9]+');
+    Iterable<RegExpMatch> matches = reg.allMatches(message);
+    double totalamount = 0;
+    bool ismessagevalid = await isMessageValid(message);
+
+    if (ismessagevalid) {
+      bool isReceived =
+          (message.contains('have received') || (message.contains('has sent')));
+      // print(isReceived);
+      var amount = matches.first[0];
+      amount = amount.toString().replaceAll(',', '');
+      totalamount = double.parse(amount.toString());
+
+      if (isReceived) {
+        totalamount = totalamount;
+      } else {
+        totalamount = totalamount * -1;
+      }
+    }
+    return totalamount;
+  }
+
+  Future<bool> isMessageValid(String message) async {
+    bool ismessageValid = await !(message.contains('Failed') ||
+        (message.contains('Insufficient')) ||
+        message.contains('PIN') ||
+        message.contains('Entered') ||
+        (message.contains('partially pay')));
+    // print(ismessageValid);
+    return ismessageValid;
   }
 
 // utils

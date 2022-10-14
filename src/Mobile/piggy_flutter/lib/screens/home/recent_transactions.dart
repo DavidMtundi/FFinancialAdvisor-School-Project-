@@ -6,13 +6,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:piggy_flutter/blocs/recent_transactions/bloc.dart';
 import 'package:piggy_flutter/models/models.dart';
-import 'package:piggy_flutter/models/transaction_group_item.dart';
 import 'package:piggy_flutter/theme/piggy_app_theme.dart';
-import 'package:piggy_flutter/widgets/common/calendar_popup_view.dart';
 import 'package:piggy_flutter/widgets/common/common.dart';
-import 'package:piggy_flutter/widgets/common/empty_result_widget.dart';
-import 'package:piggy_flutter/widgets/common/error_display_widget.dart';
-import 'package:piggy_flutter/widgets/common/loading_widget.dart';
 import 'package:piggy_flutter/widgets/common/search_bar.dart';
 import 'package:piggy_flutter/widgets/transaction_list.dart';
 

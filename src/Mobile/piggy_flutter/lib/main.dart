@@ -54,8 +54,8 @@ Future<void> main() async {
   await _scheduleReminderNotification();
 
   final PiggyApiClient piggyApiClient = PiggyApiClient(
-    httpClient: http.Client(),
-  );
+      //httpClient: http.Client(),
+      );
   final UserRepository userRepository =
       UserRepository(piggyApiClient: piggyApiClient);
 
