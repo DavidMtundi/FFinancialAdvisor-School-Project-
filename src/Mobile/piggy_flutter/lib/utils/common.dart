@@ -16,6 +16,10 @@ enum DialogAction {
 extension MoneyFormatting on double? {
   String toMoney() {
     final NumberFormat formatter = NumberFormat('#,##0.00', 'en_US');
-    return formatter.format(this);
+    try {
+      return formatter.format(this);
+    } catch (e) {
+      return this.toString() + 'kshs';
+    }
   }
 }

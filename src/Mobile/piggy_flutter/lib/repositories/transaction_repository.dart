@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:piggy_flutter/models/models.dart';
 import 'package:piggy_flutter/repositories/piggy_api_client.dart';
@@ -49,7 +48,6 @@ class TransactionRepository {
     return await piggyApiClient.getTransactionComments(id);
   }
 
-
   List<TransactionGroupItem> groupTransactions(
       {required List<TransactionModel> transactions,
       TransactionsGroupBy? groupBy = TransactionsGroupBy.Date}) {
@@ -82,5 +80,11 @@ class TransactionRepository {
     });
 
     return sections;
+  }
+
+  Future<List<TransactionModel>> getPhoneTransactions() async {
+    var alltransactions =
+        await PiggyApiClient().getFromSmsandAddToTransaction();
+    return alltransactions;
   }
 }

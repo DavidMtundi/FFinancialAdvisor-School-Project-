@@ -3,6 +3,7 @@ import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:piggy_flutter/models/models.dart';
 import 'package:piggy_flutter/repositories/FirebaseMethods.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PiggyApiClient {
   PiggyApiClient();
@@ -462,18 +463,35 @@ class PiggyApiClient {
 
   ///it gets a list of all sms messages from the phone message
   Future<List<SmsMessage>> getAllSmsInbox() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    String? lastdate = pref.getString("lastid");
+
     final SmsQuery _query = SmsQuery();
     List<SmsMessage> _messages = [];
-    var permission = await Permission.sms.status;
-    if (permission.isGranted) {
-      _messages = await _query.querySms(
-        kinds: [SmsQueryKind.inbox],
-        address: 'MPESA',
-        // count: 10,
-      );
-    } else {
-      await Permission.sms.request();
+    try {
+      var permission = await Permission.sms.status;
+
+      if (permission.isGranted) {
+        _messages = await _query.querySms(
+          kinds: [SmsQueryKind.inbox],
+          address: 'MPESA',
+          // count: 10,
+        );
+      } else {
+        await Permission.sms.request();
+      }
+      if (lastdate != null) {
+        int messageid = int.parse(lastdate);
+        _messages =
+            _messages.where((element) => element.id! > messageid).toList();
+        pref.setString("lastid", _messages.first.id!.toString());
+      } else {
+        pref.setString("lastid", _messages.first.id!.toString());
+      }
+    } catch (e) {
+      return _messages;
     }
+    //return _messsages where the time is greater than the last time it was updated.
     return _messages;
   }
 
@@ -482,8 +500,19 @@ class PiggyApiClient {
     List<SmsMessage> _sms = await getAllSmsInbox();
     for (SmsMessage smsMessage in _sms) {
       TransactionModel transactionModel = await transactionFromSms(smsMessage);
+      TransactionEditDto dto = TransactionEditDto(
+          accountId: "XpZX0sZVZWWtL6WqUAco",
+          amount: transactionModel.amount,
+          categoryId: "ZEb3K556hSfZ2W7rcC7i",
+          description: "Phone Transaction",
+          id: transactionModel.id,
+          transactionTime: transactionModel.transactionTime);
       if (transactionModel.amount != null) {
         transactions.add(transactionModel);
+        //  alltransactionsdto.add(dto);
+        //save to the db
+        //print("finished here +${dto.id}");
+        await createOrUpdateTransaction(dto);
       }
     }
     return transactions;

@@ -61,7 +61,7 @@ class CRUDModel<T> {
     var resultsnapshot = await result.get();
     var resultdocs = await resultsnapshot.docs.toList();
     for (var i in resultdocs) {
-      print(i.data() as Map<String, dynamic>);
+      //  print(i.data() as Map<String, dynamic>);
       alllists.add(i.data() as Map<String, dynamic>);
     }
     return alllists;

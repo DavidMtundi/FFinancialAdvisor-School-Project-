@@ -18,6 +18,20 @@ class ApiBaseHelper {
     return responsejson;
   }
 
+  Future<dynamic> post(String url, Map<String, dynamic> body) async {
+    print('Api Post, url $url');
+    var responsejson;
+    try {
+      Uri value = Uri.parse(baseUrl + url);
+      final response = await http.post(value, body: body);
+      responsejson = returnResponse(response);
+    } catch (e) {
+      print('No Network');
+    }
+    print('Api post received');
+    return responsejson;
+  }
+
   dynamic returnResponse(http.Response response) {
     switch (response.statusCode) {
       case 200:

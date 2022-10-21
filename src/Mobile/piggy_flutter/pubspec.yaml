@@ -58,6 +58,7 @@ dependencies:
   firebase_auth: ^3.9.0
   flutter_sms_inbox: ^1.0.2
   permission_handler: ^9.1.0
+  kommunicate_flutter: ^1.4.7
 
 dev_dependencies:
   flutter_test:

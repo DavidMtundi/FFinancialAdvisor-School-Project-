@@ -217,9 +217,15 @@ class OverallView extends StatelessWidget {
                                           CrossAxisAlignment.end,
                                       children: <Widget>[
                                         Text(
-                                          state.summary.networthPercentage!
-                                                  .substring(0, 4) +
-                                              '%',
+                                          state.summary
+                                                      .networthPercentage!.length >
+                                                  3
+                                              ? state.summary
+                                                      .networthPercentage!
+                                                      .substring(0, 4) +
+                                                  '%'
+                                              : state
+                                                  .summary.networthPercentage!,
                                           style: const TextStyle(
                                             fontFamily: PiggyAppTheme.fontName,
                                             fontWeight: FontWeight.w500,

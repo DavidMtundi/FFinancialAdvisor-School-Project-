@@ -4,12 +4,15 @@ class TransactionEditDto {
   String? categoryId;
 
   TransactionEditDto(
-      {this.id,
+      {
+        this.id,
       this.description,
       this.accountId,
       this.transactionTime,
       this.amount,
-      this.categoryId});
+      this.categoryId
+      
+      });
 
   TransactionEditDto.fromJson(Map<String, dynamic> json)
       : id = json['id'],

@@ -8,8 +8,9 @@ import 'package:piggy_flutter/blocs/transaction_detail/bloc.dart';
 import 'package:piggy_flutter/models/models.dart';
 import 'package:piggy_flutter/screens/account/account_form.dart';
 import 'package:piggy_flutter/screens/account/account_list.dart';
-import 'package:piggy_flutter/screens/home/ChatScreen.dart';
+import 'package:piggy_flutter/screens/ChatScreen/ChatScreen.dart';
 import 'package:piggy_flutter/screens/home/overview_screen.dart';
+import 'package:piggy_flutter/screens/home/phone_transaction_screen.dart';
 import 'package:piggy_flutter/screens/home/recent_transactions.dart';
 import 'package:piggy_flutter/screens/home/user_screen.dart';
 import 'package:piggy_flutter/screens/transaction/transaction_detail.dart';
@@ -75,11 +76,12 @@ class TabIconData {
 }
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key, this.startpage = StartPage.Dashboard, })
-      : super(key: key);
+  const HomeScreen({
+    Key? key,
+    this.startpage = StartPage.Dashboard,
+  }) : super(key: key);
 
   final StartPage startpage;
-
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -190,7 +192,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             categoryName: transactionData['CategoryName'],
             creatorUserName: transactionData['CreatorUserName'],
             accountName: transactionData['AccountName']);
-        // TODO(abhith): get data from Id rather than sending over notification
 
         Navigator.push(
             context,
@@ -213,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return true;
   }
 
-  Widget bottomBar(   ) {
+  Widget bottomBar() {
     return Column(
       children: <Widget>[
         const Expanded(
@@ -302,7 +303,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   return;
                 }
                 setState(() {
-                  tabBody = ChatScreen();
+                  tabBody = phone_transaction_screen();
                   _selectedNavIndex = index;
                 });
               });

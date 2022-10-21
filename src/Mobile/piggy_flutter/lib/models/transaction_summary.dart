@@ -7,7 +7,7 @@ class TransactionSummary {
       tenantExpense = 0.0,
       tenantSaved = 0.0,
       userSaved = 0.0;
-  String? networthPercentage = "0%", currencySymbol = "";
+  String? networthPercentage = "0", currencySymbol = "";
   int? totalFamilyTransactionsCount;
 
   TransactionSummary(
@@ -30,8 +30,8 @@ class TransactionSummary {
         userIncome = json['userIncome'],
         tenantExpense = (json['tenantExpense']).abs(),
         userExpense = (json['userExpense']).abs(),
-        tenantSaved = json['tenantSaved'],
-        userSaved = json['userSaved'],
+        tenantSaved = double.parse(json['tenantSaved'].toString()),
+        userSaved = double.parse(json['userSaved'].toString()),
         networthPercentage = json['netWorthPercentage'].toString() + '%',
         currencySymbol = 'Kshs',
 

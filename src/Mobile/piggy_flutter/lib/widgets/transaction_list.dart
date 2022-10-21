@@ -61,7 +61,7 @@ class TransactionList extends StatelessWidget {
       BuildContext context, TransactionGroupItem item) {
     final Iterable<Widget> transactionList = item.transactions.map(
         (TransactionModel transaction) =>
-            buildTransactionList(context, transaction, item.groupby));
+            buildTransaction(context, transaction, item.groupby));
 
     return ExpansionTile(
       key: PageStorageKey<String?>(item.title),
@@ -113,7 +113,7 @@ class TransactionList extends StatelessWidget {
     );
   }
 
-  MergeSemantics buildTransactionList(BuildContext context,
+  MergeSemantics buildTransaction(BuildContext context,
       TransactionModel transaction, TransactionsGroupBy? groupBy) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return MergeSemantics(

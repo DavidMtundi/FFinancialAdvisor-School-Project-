@@ -145,7 +145,7 @@ class _LoginFormState extends State<LoginForm> {
           maxLines: 1,
           controller: _usernameController,
           decoration: InputDecoration(
-            hintText: "Enter your username",
+            hintText: "Enter your email",
             labelText: "Username",
             // errorText: snapshot.error,
           ),
